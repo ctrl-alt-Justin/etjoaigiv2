@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Etjoaigi Trading Inventory Intelligence Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Primary navigation">
+        <div class="brand-card">
+          <div class="brand-mark">ET</div>
+          <div>
+            <p class="eyebrow">Etjoaigi Trading</p>
+            <h1>FurnitureOps</h1>
+          </div>
+        </div>
+        <nav>
+          <a class="nav-link active" href="#overview">Overview</a>
+          <a class="nav-link" href="#inventory">Inventory</a>
+          <a class="nav-link" href="#valuation">Valuation</a>
+          <a class="nav-link" href="#intake">Intake Wizard</a>
+          <a class="nav-link" href="#taxonomy">Taxonomy</a>
+          <a class="nav-link" href="#analytics">Analytics</a>
+          <a class="nav-link" href="#customer-view">Customer View</a>
+          <a class="nav-link" href="#aging">Age Monitor</a>
+        </nav>
+        <div class="sidebar-note">
+          <span class="pulse"></span>
+          <strong>Live book</strong>
+          <p>All intake, pricing, markdown, and publish checks flow into one controlled inventory record.</p>
+        </div>
+      </aside>
+
+      <main>
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Second-hand office furniture control center</p>
+            <h2>Standardized Product Evaluation Dashboard</h2>
+          </div>
+          <div class="top-actions">
+            <button class="ghost-btn" id="generateShareLink">Generate public link</button>
+            <button class="primary-btn" id="openIntake">Start intake</button>
+          </div>
+        </header>
+
+        <section id="overview" class="hero-grid">
+          <article class="hero-card">
+            <div class="hero-content">
+              <span class="status-pill">Oceanic Motion live workspace</span>
+              <h3>Buy, inspect, price, list, and age second-hand furniture from a single operating book.</h3>
+              <p>
+                Built for Etjoaigi Trading teams that need strict category rules, consistent condition grades,
+                guarded margins, and instant buyer-facing product pages.
+              </p>
+              <div class="hero-actions">
+                <button class="primary-btn" onclick="document.querySelector('#intake').scrollIntoView({behavior:'smooth'})">Log new item</button>
+                <button class="ghost-btn" onclick="document.querySelector('#valuation').scrollIntoView({behavior:'smooth'})">Run valuation</button>
+              </div>
+            </div>
+            <div class="hero-visual" aria-hidden="true">
+              <div class="chair-card">
+                <span></span>
+                <strong>Herman Miller Aeron</strong>
+                <small>Grade: Good • Ask: $520</small>
+              </div>
+              <div class="floating-metric">Margin lock<br /><b>42%</b></div>
+            </div>
+          </article>
+
+          <div class="metric-grid" aria-label="Inventory metrics">
+            <article class="metric-card">
+              <span>Active stock</span>
+              <strong id="metricActive">0</strong>
+              <small>units ready/listed</small>
+            </article>
+            <article class="metric-card">
+              <span>Total cost</span>
+              <strong id="metricCost">$0</strong>
+              <small>capital deployed</small>
+            </article>
+            <article class="metric-card">
+              <span>Total ask</span>
+              <strong id="metricAsk">$0</strong>
+              <small>current book value</small>
+            </article>
+            <article class="metric-card alert">
+              <span>Markdown due</span>
+              <strong id="metricDue">0</strong>
+              <small>policy alerts</small>
+            </article>
+          </div>
+        </section>
+
+        <section id="inventory" class="panel">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Inventory tracking</p>
+              <h3>Centralized master inventory database</h3>
+            </div>
+            <button class="secondary-btn" id="resetFilters">Reset filters</button>
+          </div>
+          <div class="toolbar">
+            <label class="search-box">
+              <span>Fuzzy search</span>
+              <input id="searchInput" type="search" placeholder="Search SKU, title, brand, color..." />
+            </label>
+            <label>
+              Status
+              <select id="statusFilter">
+                <option value="all">All statuses</option>
+                <option>In stock</option>
+                <option>Intake</option>
+                <option>Listed</option>
+                <option>Sold</option>
+              </select>
+            </label>
+            <label>
+              Category
+              <select id="categoryFilter">
+                <option value="all">All categories</option>
+                <option>Task Chair</option>
+                <option>Executive Desk</option>
+                <option>Storage</option>
+                <option>Conference Table</option>
+              </select>
+            </label>
+            <label>
+              Sort by
+              <select id="sortSelect">
+                <option value="daysDesc">Days listed ↓</option>
+                <option value="askDesc">Ask value ↓</option>
+                <option value="marginDesc">Margin ↓</option>
+                <option value="brandAsc">Brand A-Z</option>
+              </select>
+            </label>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>SKU / Item</th>
+                  <th>Category</th>
+                  <th>Attributes</th>
+                  <th>Status</th>
+                  <th>Units</th>
+                  <th>Cost vs Ask</th>
+                  <th>Age</th>
+                  <th>Flags</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="inventoryTable"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="valuation" class="two-column">
+          <article class="panel valuation-panel">
+            <div class="section-header">
+              <div>
+                <p class="eyebrow">Valuation engine and dynamic pricing</p>
+                <h3>Policy-driven calculator</h3>
+              </div>
+              <span class="status-pill">Cost-floor protected</span>
+            </div>
+            <div class="calculator-grid">
+              <label>Reference value ($)<input id="refValue" type="number" value="900" min="0" /></label>
+              <label>Acquisition cost ($)<input id="unitCost" type="number" value="260" min="0" /></label>
+              <label>Brand tier
+                <select id="brandTier">
+                  <option value="1.15">Tier A premium × 1.15</option>
+                  <option value="1.00" selected>Tier B standard × 1.00</option>
+                  <option value="0.82">Tier C value × 0.82</option>
+                </select>
+              </label>
+              <label>Condition grade
+                <select id="gradeMultiplier">
+                  <option value="0.86">Like New × 0.86</option>
+                  <option value="0.68" selected>Good × 0.68</option>
+                  <option value="0.48">Fair × 0.48</option>
+                </select>
+              </label>
+              <label>Days listed
+                <select id="daysListed">
+                  <option value="0">0 days: no markdown</option>
+                  <option value="30">30 days: -6%</option>
+                  <option value="60">60 days: -12%</option>
+                  <option value="90">90 days: -20%</option>
+                </select>
+              </label>
+              <label>Target margin %<input id="targetMargin" type="number" value="35" min="1" max="95" /></label>
+            </div>
+            <div class="price-output">
+              <div>
+                <span>Suggested ask</span>
+                <strong id="suggestedAsk">$0</strong>
+                <small id="askRange">Benchmark range: $0–$0</small>
+              </div>
+              <div>
+                <span>Gross margin</span>
+                <strong id="grossMargin">0%</strong>
+                <small id="floorWarning">Floor clear</small>
+              </div>
+            </div>
+          </article>
+
+          <article id="aging" class="panel">
+            <div class="section-header">
+              <div>
+                <p class="eyebrow">Product and listing age monitor</p>
+                <h3>Markdown alerts</h3>
+              </div>
+            </div>
+            <div id="ageAlerts" class="alert-list"></div>
+          </article>
+        </section>
+
+        <section id="intake" class="panel intake-panel">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Structured intake workflow</p>
+              <h3>Sequential 5-step logging wizard</h3>
+            </div>
+            <span id="validationBadge" class="status-pill warning">Validation required</span>
+          </div>
+          <div class="stepper" id="stepper"></div>
+          <form id="intakeForm" class="wizard-card">
+            <div class="wizard-step active" data-step="0">
+              <h4>1. Identify product</h4>
+              <p>Product naming and category automation use the fixed taxonomy tree.</p>
+              <div class="form-grid">
+                <label>Brand<input name="brand" required placeholder="e.g., Steelcase" /></label>
+                <label>Model / title<input name="title" required placeholder="Series 2 Task Chair" /></label>
+                <label>Category
+                  <select name="category" required>
+                    <option value="">Choose category</option>
+                    <option>Task Chair</option>
+                    <option>Executive Desk</option>
+                    <option>Storage</option>
+                    <option>Conference Table</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div class="wizard-step" data-step="1">
+              <h4>2. Record mandatory attributes</h4>
+              <p>Office furniture fields inherit by category to reduce repetitive entry.</p>
+              <div class="form-grid">
+                <label>Size / dimensions<input name="size" required placeholder="26W × 26D × 40H in" /></label>
+                <label>Mechanism
+                  <select name="mechanism" required>
+                    <option value="">Choose mechanism</option>
+                    <option>Synchro tilt</option>
+                    <option>Height-adjustable</option>
+                    <option>Fixed pedestal</option>
+                    <option>Locking drawers</option>
+                  </select>
+                </label>
+                <label>Lumbar support
+                  <select name="lumbar" required>
+                    <option value="">Choose support</option>
+                    <option>Adjustable</option>
+                    <option>Fixed</option>
+                    <option>None</option>
+                    <option>N/A</option>
+                  </select>
+                </label>
+                <label>Color<input name="color" required placeholder="Black mesh" /></label>
+              </div>
+            </div>
+            <div class="wizard-step" data-step="2">
+              <h4>3. Inspect and flag</h4>
+              <p>Mandatory condition criteria prevent incomplete publishing.</p>
+              <div class="check-grid">
+                <label><input type="checkbox" name="inspection" required /> Frame stable</label>
+                <label><input type="checkbox" name="inspection" required /> Upholstery checked</label>
+                <label><input type="checkbox" name="inspection" required /> Mechanisms tested</label>
+                <label><input type="checkbox" name="inspection" required /> Odor/stain review complete</label>
+              </div>
+              <label>Item flags
+                <select name="flag">
+                  <option>None</option>
+                  <option>Repair needed</option>
+                  <option>Premium brand</option>
+                  <option>Missing part</option>
+                </select>
+              </label>
+            </div>
+            <div class="wizard-step" data-step="3">
+              <h4>4. Photos and media</h4>
+              <p>Capture front, side, back, label/SKU, close-ups of wear, and mechanism detail.</p>
+              <div class="photo-guidance">
+                <div>Front hero</div><div>Side profile</div><div>Damage close-up</div><div>Brand label</div>
+              </div>
+              <label>Media upload<input name="media" type="file" multiple accept="image/*" /></label>
+            </div>
+            <div class="wizard-step" data-step="4">
+              <h4>5. Price preview and publish checks</h4>
+              <p>Automated valuation trigger calculates ask and enforces margin floors before publishing to the book.</p>
+              <div class="publish-checks" id="publishChecks"></div>
+            </div>
+            <div class="wizard-actions">
+              <button type="button" class="ghost-btn" id="prevStep">Back</button>
+              <button type="button" class="secondary-btn" id="nextStep">Next</button>
+              <button type="submit" class="primary-btn" id="publishBtn">Publish unit</button>
+            </div>
+          </form>
+        </section>
+
+        <section id="taxonomy" class="two-column">
+          <article class="panel">
+            <div class="section-header">
+              <div>
+                <p class="eyebrow">Centralized taxonomy and valuation rules</p>
+                <h3>Category tree manager</h3>
+              </div>
+            </div>
+            <div class="taxonomy-tree">
+              <details open><summary>Office Furniture</summary>
+                <details open><summary>Seating</summary><p>Task Chair → size, mechanism, lumbar support, color, upholstery</p><p>Guest Chair → frame, stackable, color</p></details>
+                <details open><summary>Desks and Tables</summary><p>Executive Desk → dimensions, finish, drawers, cable ports</p><p>Conference Table → seats, top shape, power module</p></details>
+                <details><summary>Storage</summary><p>Filing Cabinet → lock status, drawer count, lateral/vertical</p></details>
+              </details>
+            </div>
+          </article>
+          <article class="panel rules-card">
+            <p class="eyebrow">Controlled vocabulary enforcer</p>
+            <h3>Multi-factor formula</h3>
+            <code>Ask = Reference Value × Brand Tier × Grade × Markdown Policy</code>
+            <div class="rule-list">
+              <span>30d -6%</span><span>60d -12%</span><span>90d -20%</span><span>Never price below cost-floor</span>
+            </div>
+            <h4>Standard condition badges</h4>
+            <div class="badge-row"><span class="grade like">Like New</span><span class="grade good">Good</span><span class="grade fair">Fair</span></div>
+          </article>
+        </section>
+
+        <section id="analytics" class="panel">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Analytics</p>
+              <h3>Supplier, sell-through, aging, and flow intelligence</h3>
+            </div>
+          </div>
+          <div class="analytics-grid">
+            <article class="chart-card">
+              <h4>Vendor ranking</h4>
+              <div class="bar-chart" id="vendorChart"></div>
+            </article>
+            <article class="chart-card">
+              <h4>Inventory aging profile</h4>
+              <div class="donut"><span>38%<small>over 60d</small></span></div>
+            </article>
+            <article class="chart-card wide">
+              <h4>Flow analytics: intake vs sales vs revenue</h4>
+              <div class="flow-chart">
+                <div style="--h:58%"><b></b><span>Intake</span></div>
+                <div style="--h:46%"><b></b><span>Sales</span></div>
+                <div style="--h:76%"><b></b><span>Revenue</span></div>
+                <div style="--h:64%"><b></b><span>Margin</span></div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="customer-view" class="panel customer-panel">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Customer product view page</p>
+              <h3>Instant buyer-facing share page</h3>
+            </div>
+            <button class="secondary-btn" id="copyShareLink">Copy public link</button>
+          </div>
+          <div class="product-view">
+            <div class="gallery">
+              <div class="gallery-main">Office chair photo</div>
+              <div></div><div></div><div></div>
+            </div>
+            <div class="product-copy">
+              <span class="grade good">Good</span>
+              <h3>Steelcase Leap V2 Task Chair</h3>
+              <p class="availability">Available now • SKU ET-CHR-1042</p>
+              <strong class="buyer-price">$430</strong>
+              <dl>
+                <div><dt>Color</dt><dd>Black fabric</dd></div>
+                <div><dt>Mechanism</dt><dd>Height adjustable, synchro tilt</dd></div>
+                <div><dt>Lumbar</dt><dd>Adjustable lumbar support</dd></div>
+                <div><dt>Condition</dt><dd>Clean with light seat wear</dd></div>
+              </dl>
+              <button class="primary-btn">Share with buyer</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="toast" role="status" aria-live="polite"></div>
+    <script src="script.js"></script>
+  </body>
+</html>
